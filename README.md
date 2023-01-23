@@ -31,3 +31,7 @@ Implementing the famous game 2048 with the rust programming language
 ### Tests:
 
 - Cargo test
+
+### Deployment:
+
+- Docker
