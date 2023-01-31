@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 yew = { version = "0.20", features = ["csr"] }
+rand = { version = "0.8.5"}
