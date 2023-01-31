@@ -18,20 +18,20 @@ true -> game over
 false -> still at least one movement left
 */
 fn check_end(matrix : &mut [[u128; 4]; 4]) -> bool {
-    let mut movement: bool = false;
+    let mut movement: bool = true;
     for i in 0..4 {
         for j in 0..4 {
             if (i > 0) && (matrix[i-1][j] == matrix[i][j]) {
-                movement = true;
+                movement = false;
             }
-            if (i < 3) && (matrix[i+1][j] == matrix[i][j]) {
-                movement = true;
+            else if (i < 3) && (matrix[i+1][j] == matrix[i][j]) {
+                movement = false;
             }
-            if (j > 0) && (matrix[i][j-1] == matrix[i][j]) {
-                movement = true;
+            else if (j > 0) && (matrix[i][j-1] == matrix[i][j]) {
+                movement = false;
             }
-            if (j < 3) && (matrix[i][j+1] == matrix[i][j]) {
-                movement = true;
+            else if (j < 3) && (matrix[i][j+1] == matrix[i][j]) {
+                movement = false;
             }
         }
     }
@@ -77,7 +77,7 @@ fn generate_tile(matrix : &mut [[u128; 4]; 4]) -> bool {
                     print_matrix(*matrix); 
 
                     // possible end game
-                    if zeros == 15 {
+                    if zeros == 1 {
                         return check_end(matrix);
                     }
 
@@ -120,7 +120,9 @@ fn move_left(matrix : &mut [[u128; 4]; 4]) -> bool {
     for k in 0..3 {
         for j in 1..(4-k) {
             for i in 0..4 {
-                if (matrix[i][j] == matrix[i][j-1]) && (!merged[i][j-1]) {
+                if matrix[i][j] == 0 {continue};
+                
+                if (matrix[i][j] == matrix[i][j-1]) && (!merged[i][j-1]) && (!merged[i][j]) {
                     matrix[i][j-1] *= 2;
                     matrix[i][j] = 0;
 
@@ -161,7 +163,9 @@ fn move_right(matrix : &mut [[u128; 4]; 4]) -> bool {
     for k in 0..3 {
         for j in (k..3).rev() {
             for i in 0..4 {
-                if (matrix[i][j] == matrix[i][j+1]) && (!merged[i][j+1]) {
+                if matrix[i][j] == 0 {continue};
+                
+                if (matrix[i][j] == matrix[i][j+1]) && (!merged[i][j+1]) && (!merged[i][j]) {
                     matrix[i][j+1] *= 2;
                     matrix[i][j] = 0;
 
@@ -203,7 +207,9 @@ fn move_up(matrix : &mut [[u128; 4]; 4]) -> bool {
     for k in 0..3 {
         for i in 1..(4-k) {
             for j in 0..4 {
-                if (matrix[i][j] == matrix[i-1][j]) && (!merged[i-1][j]) {
+                if matrix[i][j] == 0 {continue};
+                
+                if (matrix[i][j] == matrix[i-1][j]) && (!merged[i-1][j]) && (!merged[i][j]) {
                     matrix[i-1][j] *= 2;
                     matrix[i][j] = 0;
 
@@ -245,7 +251,9 @@ fn move_down(matrix : &mut [[u128; 4]; 4]) -> bool {
     for k in 0..3 {
         for i in (k..3).rev() {
             for j in 0..4 {
-                if (matrix[i][j] == matrix[i+1][j]) && (!merged[i+1][j]) {
+                if matrix[i][j] == 0 {continue};
+                
+                if (matrix[i][j] == matrix[i+1][j]) && (!merged[i+1][j]) && (!merged[i][j]) {
                     matrix[i+1][j] *= 2;
                     matrix[i][j] = 0;
 
