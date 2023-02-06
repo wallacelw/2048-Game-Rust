@@ -151,3 +151,53 @@ button:hover {
     cursor: pointer;
     transform: scale(1.1);
 }
+
+@media screen and (max-width: 720px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .container .game {
+        max-width: 360px;
+    }
+
+    .game .game__header {
+        gap: 10px;
+        height: max-content;
+    }
+
+    .game__header .game__header__2048 {
+        font-size: var(--medium-font);
+    }
+
+    .game__header .content {
+        gap: 10px;
+    }
+    
+    .game__header .content div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        grid-column: span 2;
+    }
+
+    .game__header .content div > p, span {
+        font-size: var(--smaller-font);
+    }
+
+    .game__header .content p {
+        font-size: var(--smaller-font);
+        letter-spacing: 0.05em;
+    }
+
+    .board {
+        height: 360px;
+        width: 360px;
+        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    }
+
+    .board .piece {
+        height: 70px;
+        font-size: var(--medium-font);
+    }
+}
