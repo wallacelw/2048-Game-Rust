@@ -1,11 +1,10 @@
 //! Implementação do jogo 2048 utilizando a linguagem Rust
 //!
 //! Foi utilizado o framework Yew para criar o aplicativo web
-
 use yew::prelude::*;
 use rand::Rng;
 use std::io;
-use std:: mem;
+use std::mem;
 
 // Cria o html
 // Mas por enquanto o jogo não usa esse front
@@ -214,37 +213,32 @@ fn start_game(matrix : &mut [[u128; 4]; 4]) {
     let mut score: u128 = 0;
 
     loop {
-        let mut movement = String::new();
+        let mut movement;
 
         io::stdin()
             .read_line(&mut movement)
             .expect("Failed to read line");
-        
-        let movement: u32 = match movement.trim().parse() {
-            Ok(num) => num,
-            Err(_) => continue,
-        };
-    
-        if movement == 4 { // Left
-            if shift(matrix, [0, -1], &mut score) {break};
-        }
-        else if movement == 6 { // Right
-            if shift(matrix, [0,  1], &mut score) {break};
-        }
-        else if movement == 8 { // Up
-            if shift(matrix, [-1, 0], &mut score) {break};
-        }
-        else if movement == 2 { // Down
-            if shift(matrix, [ 1, 0], &mut score) {break};
-        }
-        else {break};
 
+        let mut teste = register_key_down(mut movement);
+
+        match teste.keyCode{
+            37 => if shift(matrix, [0, -1], &mut score) {break} //Left
+            39 => if shift(matrix, [0,  1], &mut score) {break} //Right
+            38 => if shift(matrix, [-1,  0], &mut score) {break} //Up
+            40 => if shift(matrix, [1,  0], &mut score) {break} //Down
+            _ => {break}
+        }
         println!("------------");
     }
 
     end_game(&mut score);
 
 }
+
+fn register_key_down<movement: IEventTarget>(
+    element: &movement,
+    callback: Callback<KeyDownEvent>
+) -> KeyListenerHandle;
 
 
 /**
