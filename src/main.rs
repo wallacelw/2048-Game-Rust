@@ -261,3 +261,176 @@ fn main() {
 
     start_game(&mut matrix);
 }   
+
+
+
+// Módulo de testes
+#[cfg(test)]
+mod tests {
+    use crate::shift;
+
+    struct TestCase {
+        state: [ [u128; 4] ; 4],
+        moves: [i32; 2],
+    }
+
+    #[test]
+    fn move_up(){
+        let mut teste = 
+            TestCase {
+                
+                state: [
+                [0, 0, 0, 0],
+                [0, 2, 2, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]
+                ],
+                
+                moves:[-1,0]
+            };
+        
+        shift(&mut teste.state,teste.moves, &mut 1);
+       
+        assert!(teste.state[0][1] == 2 && teste.state[0][2] == 2);
+    }
+    
+    #[test]
+    fn move_down(){
+        let mut teste = 
+            TestCase {
+                
+                state: [
+                [0, 0, 0, 0],
+                [0, 2, 2, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]
+                ],
+                
+                moves:[1,0]
+            };
+        
+        shift(&mut teste.state,teste.moves, &mut 1);
+
+        assert!(teste.state[3][1] == 2 && teste.state[3][2] == 2);
+    
+    }
+
+    #[test]
+    fn move_rigth(){
+        let mut teste = 
+            TestCase {
+                    
+                state: [
+                [0, 0, 0, 0],
+                [0, 2, 0, 0],
+                [0, 2, 0, 0],
+                [0, 0, 0, 0]
+                ],
+                    
+                moves:[0,1]
+                };
+            
+        shift(&mut teste.state,teste.moves, &mut 1);
+
+        assert!(teste.state[1][3] == 2 && teste.state[2][3] == 2);
+    
+    }
+        
+    #[test]
+    fn move_left(){
+        let mut teste = 
+            TestCase {
+                
+                state: [
+                [0, 0, 0, 0],
+                [0, 0, 2, 0],
+                [0, 0, 2, 0],
+                [0, 0, 0, 0]
+                ],
+                
+                moves:[0,-1]
+            };
+        
+        shift(&mut teste.state,teste.moves, &mut 1);
+
+        assert!(teste.state[1][0] == 2 && teste.state[2][0] == 2);
+
+        }
+    
+    #[test]
+    fn combine(){
+        let mut teste = 
+            TestCase {
+                
+                state: [
+                [0, 0, 0, 0],
+                [2, 2, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]
+                ],
+                
+                moves:[0,-1]
+            };
+        
+        shift(&mut teste.state,teste.moves, &mut 1);
+
+        assert!(teste.state[1][0] == 4);
+
+        }
+    
+    #[test]
+    fn not_combine(){
+        let mut teste = 
+            TestCase {
+                
+                state: [
+                [0, 0, 0, 0],
+                [2, 4, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]
+                ],
+                
+                moves:[0,-1]
+            };
+        
+        shift(&mut teste.state,teste.moves, &mut 1);
+
+        assert!(teste.state[1][0] == 2 && teste.state[1][1] == 4);
+        }
+   
+    #[test]
+    fn generating_tale(){
+        let mut teste = 
+            TestCase {
+                
+                state: [
+                [0, 0, 0, 0],
+                [0, 2, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]
+                ],
+                
+                moves:[-1,0]
+            };
+        
+        shift(&mut teste.state,teste.moves, &mut 1);
+
+        let mut non_zeros = 0;
+        
+        for i in 0..4 {
+            for j in 0..4 {
+                if teste.state[i][j] == 2 || teste.state[i][j] == 4 {
+
+                    non_zeros +=1
+
+                }
+            }
+        }
+
+        assert_eq!(non_zeros,2);
+
+        }
+
+
+}
+       
