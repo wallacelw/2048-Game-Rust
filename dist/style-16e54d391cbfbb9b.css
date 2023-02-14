@@ -1,0 +1,203 @@
+:root {
+    --font-odibee: 'Odibee Sans', cursive;
+    --font-open: 'Open Sans', sans-serif;
+    --smaller-font: 20px;
+    --medium-font: 36px;
+    --larger-font: 48px;
+
+    --color-block-1: #EBE295;
+    --color-block-2: #E2D238;
+    --color-block-3: #D1BD04;
+    --color-block-4: #9E8F03;
+    --color-block-5: #524A02;
+    --color-block-6: #FFA701;
+
+    --dark-grey: #7B7B7B;
+    --light-grey: #B5B5B5;
+    --white: #fff;
+    --dark-yellow: #FFA701;
+  }
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-open);
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    margin-top: 5rem;
+}
+
+.container .game {
+    width: 472px;
+}
+
+.game .game__header {
+    display: flex;
+    height: 118px;
+    gap: 1rem;
+}
+
+.game__header .game__header__2048 {
+    width: 160px;
+    padding: 5px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    color: var(--white);
+    background-color: var(--dark-yellow);
+    font-family: var(--font-open);
+    font-size: var(--larger-font);
+}
+
+.game__header .content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    gap: 1.5rem;
+}
+
+.game__header .content div {
+    border-radius: 8px;
+    background-color: var(--dark-grey);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--smaller-font);
+    text-transform: uppercase;
+    padding: 5px 10px;
+}
+
+.game__header .content div > p, span {
+    font-family: var(--font-odibee);
+}
+
+.game__header .content p {
+    grid-column: span 2;
+    text-align: left;
+    font-family: var(--font-odibee);
+    font-size: 26px;
+}
+
+.board {
+    margin: 2rem auto 0;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 5px;
+    width: 100%;
+    background-color: var(--light-grey);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+}
+
+.board .piece {
+    border-radius: 5px;
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--larger-font);
+    color: var(--white);
+}
+
+.board .piece-2 {
+    background-color: var(--color-block-1);
+}
+
+.board .piece-4 {
+    background-color: var(--color-block-2);
+}
+
+.board .piece-8 {
+    background-color: var(--color-block-3);
+}
+
+.board .piece-16 {
+    background-color: var(--color-block-4);
+}
+
+.board .piece-32 {
+    background-color: var(--color-block-5);
+}
+
+.board .piece-64 {
+    background-color: var(--color-block-6);
+}
+
+button {
+    display: flex;
+    align-items: center;
+    width: 162px;
+    background-color: var(--dark-yellow);
+    color: var(--white);
+    padding: 8px 16px;
+    gap: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--dark-yellow);
+    font-family: var(--font-odibee);
+    text-transform: uppercase;
+    font-size: var(--medium-font);
+    margin: 5rem auto 0;
+    transition: 200ms;
+}
+
+button:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+@media screen and (max-width: 720px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .container .game {
+        max-width: 360px;
+    }
+
+    .game .game__header {
+        gap: 10px;
+        height: max-content;
+    }
+
+    .game__header .game__header__2048 {
+        font-size: var(--medium-font);
+    }
+
+    .game__header .content {
+        gap: 10px;
+    }
+    
+    .game__header .content div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        grid-column: span 2;
+    }
+
+    .game__header .content div > p, span {
+        font-size: var(--smaller-font);
+    }
+
+    .game__header .content p {
+        font-size: var(--smaller-font);
+        letter-spacing: 0.05em;
+    }
+
+    .board {
+        height: 360px;
+        width: 360px;
+        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    }
+
+    .board .piece {
+        height: 70px;
+        font-size: var(--medium-font);
+    }
+}

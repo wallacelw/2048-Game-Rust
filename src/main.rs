@@ -4,17 +4,8 @@
 
 use yew::prelude::*;
 use rand::Rng;
-use std::io;
-use std:: mem;
-
-// Cria o html
-// Mas por enquanto o jogo não usa esse front
-#[function_component(App)]
-fn app() -> Html {
-    html! {
-        <h1>{ "Hello World" }</h1>
-    }
-}
+use std::cell::RefCell;
+use std::{ mem };
 
 // temporary debugging function
 fn print_matrix(matrix: [[u128; 4]; 4]) {
@@ -184,65 +175,111 @@ fn shift(matrix : &mut [[u128; 4]; 4], direction : [i32; 2], score: &mut u128) -
     return generate_tile(matrix);
 }
 
-/**
-Função de fim de jogo
-É chamada após ser detectada que não há mais movimentos possíveis para o jogo.
-*/ 
-fn end_game(score: &mut u128) {
-    // do something here :D
-    // game over screen ???
-    println!("Game Over!");
-    println!("Score: {}", *score);
+// Cria o html
+// Mas por enquanto o jogo não usa esse front
+#[function_component(App)]
+fn app() -> Html {
+    html! {
+        <main>
+        <div class="container">
+            <div class="game">
+                <div class="game__header">
+                    <div class="game__header__2048">{"2048"}</div>
+                    <div class="content">
+                        <div>
+                            <p>{"pontuação"}</p>
+                            <span>{"0"}</span>
+                        </div>
+                        <div>
+                            <p>{"melhor"}</p>
+                            <span>{"0"}</span>
+                        </div>
+                        <p>{"junte as peças até formar 2048!"}</p>
+                    </div>
+                </div>
+                <div class="board">
+                    <Game/>
+                </div>
+
+                <button>{"iniciar"} <i class="fa fa-play" style="font-size:36px; color: white;"></i></button>
+            </div>
+        </div>
+    </main>
+    }
+}
+
+#[derive(Properties, PartialEq)]
+pub struct Props {
+    pub matrix: RefCell<[ [u128; 4] ; 4]>,
 }
 
 /**
 Função de inicialização do jogo.
 Inicializa também a matriz com elementos nulos e reinicia a pontuação.
 */ 
-fn start_game(matrix : &mut [[u128; 4]; 4]) {
-    *matrix = [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
-    ];
+struct Game {
+    matrix: [[u128; 4]; 4],
+    score: u128,
+}
+enum Msg {
+    KeyPressed(u32),
+}
 
-    println!("Good Luck, Have Fun!");
 
-    generate_tile(matrix);
+impl Component for Game {
+    type Message = Msg;
+    type Properties = ();
 
-    let mut score: u128 = 0;
-
-    loop {
-        let mut movement = String::new();
-
-        io::stdin()
-            .read_line(&mut movement)
-            .expect("Failed to read line");
+    fn create(_ctx: &Context<Self>) -> Self {
+        let mut matrix: [ [u128; 4] ; 4] = [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]
+        ];
+        generate_tile(&mut matrix);
         
-        let movement: u32 = match movement.trim().parse() {
-            Ok(num) => num,
-            Err(_) => continue,
-        };
-    
-        if movement == 4 { // Left
-            if shift(matrix, [0, -1], &mut score) {break};
-        }
-        else if movement == 6 { // Right
-            if shift(matrix, [0,  1], &mut score) {break};
-        }
-        else if movement == 8 { // Up
-            if shift(matrix, [-1, 0], &mut score) {break};
-        }
-        else if movement == 2 { // Down
-            if shift(matrix, [ 1, 0], &mut score) {break};
-        }
-        else {break};
-
-        println!("------------");
+        Self { 
+            matrix: matrix,
+            score: 0,
+        } 
     }
 
-    end_game(&mut score);
+    fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
+        match _msg {
+            Msg::KeyPressed(key_code) => match key_code {
+                37 => {if shift(&mut self.matrix, [0, -1], &mut self.score) {}},
+                38 => {if shift(&mut self.matrix, [-1, 0], &mut self.score) {}},
+                39 => {if shift(&mut self.matrix, [-1, 0], &mut self.score) {}},
+                40 => {if shift(&mut self.matrix, [-1, 0], &mut self.score) {}},
+                _ => return false,
+            }
+        }
+        true
+    }
+
+    fn view(&self, _ctx: &Context<Self>) -> Html {
+        html!(
+            <>
+            <div class={format!("piece piece-{}", self.matrix[0][0].to_string())}>{self.matrix[0][0].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[0][1].to_string())}>{self.matrix[0][1].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[0][2].to_string())}>{self.matrix[0][2].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[0][3].to_string())}>{self.matrix[0][3].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[1][0].to_string())}>{self.matrix[1][0].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[1][1].to_string())}>{self.matrix[1][1].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[1][2].to_string())}>{self.matrix[1][2].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[1][3].to_string())}>{self.matrix[1][3].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[2][0].to_string())}>{self.matrix[2][0].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[2][1].to_string())}>{self.matrix[2][1].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[2][2].to_string())}>{self.matrix[2][2].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[2][3].to_string())}>{self.matrix[2][3].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[3][0].to_string())}>{self.matrix[3][0].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[3][1].to_string())}>{self.matrix[3][1].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[3][2].to_string())}>{self.matrix[3][2].to_string()}</div>
+            <div class={format!("piece piece-{}", self.matrix[3][3].to_string())}>{self.matrix[3][3].to_string()}</div>
+            </>
+        )
+    }
 
 }
 
@@ -251,13 +288,5 @@ fn start_game(matrix : &mut [[u128; 4]; 4]) {
 Função main, que inicializa a págica e chama a função para inicializar o jogo.
 */ 
 fn main() {
-    //yew::Renderer::<App>::new().render();
-    let mut matrix: [ [u128; 4] ; 4] = [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
-    ];
-
-    start_game(&mut matrix);
+    yew::Renderer::<App>::new().render();
 }   

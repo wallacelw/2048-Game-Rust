@@ -7,4 +7,15 @@ edition = "2021"
 
 [dependencies]
 yew = { version = "0.20", features = ["csr"] }
+wasm-bindgen = { version="0.2.81", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4.30"
+js-sys = "0.3"
 rand = { version = "0.8.5"}
+getrandom = { version = "0.2", features = ["js"] }
+winit = { version = "0.28.1" }
+
+[dependencies.web-sys]
+version = "0.3.58"
+features = [
+    "console"
+    ]

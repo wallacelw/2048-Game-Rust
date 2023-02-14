@@ -106,27 +106,27 @@
     color: var(--white);
 }
 
-.board .piece--color1 {
+.board .piece-2 {
     background-color: var(--color-block-1);
 }
 
-.board .piece--color2 {
+.board .piece-4 {
     background-color: var(--color-block-2);
 }
 
-.board .piece--color3 {
+.board .piece-8 {
     background-color: var(--color-block-3);
 }
 
-.board .piece--color4 {
+.board .piece-16 {
     background-color: var(--color-block-4);
 }
 
-.board .piece--color5 {
+.board .piece-32 {
     background-color: var(--color-block-5);
 }
 
-.board .piece--color6 {
+.board .piece-64 {
     background-color: var(--color-block-6);
 }
 
