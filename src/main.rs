@@ -175,39 +175,6 @@ fn shift(matrix : &mut [[u128; 4]; 4], direction : [i32; 2], score: &mut u128) -
     return generate_tile(matrix);
 }
 
-// Cria o html
-// Mas por enquanto o jogo não usa esse front
-#[function_component(App)]
-fn app() -> Html {
-    html! {
-        <main>
-        <div class="container">
-            <div class="game">
-                <div class="game__header">
-                    <div class="game__header__2048">{"2048"}</div>
-                    <div class="content">
-                        <div>
-                            <p>{"pontuação"}</p>
-                            <span>{"0"}</span>
-                        </div>
-                        <div>
-                            <p>{"melhor"}</p>
-                            <span>{"0"}</span>
-                        </div>
-                        <p>{"junte as peças até formar 2048!"}</p>
-                    </div>
-                </div>
-                <div class="board">
-                    <Game/>
-                </div>
-
-                <button>{"iniciar"} <i class="fa fa-play" style="font-size:36px; color: white;"></i></button>
-            </div>
-        </div>
-    </main>
-    }
-}
-
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub matrix: RefCell<[ [u128; 4] ; 4]>,
@@ -220,9 +187,15 @@ Inicializa também a matriz com elementos nulos e reinicia a pontuação.
 struct Game {
     matrix: [[u128; 4]; 4],
     score: u128,
+    onkeypress: Callback<KeyboardEvent>,
+    ended: bool
 }
 enum Msg {
-    KeyPressed(u32),
+    KeyUP,
+    KeyDOWN,
+    KeyLEFT,
+    KeyRIGHT,
+    Nothing
 }
 
 
@@ -238,22 +211,32 @@ impl Component for Game {
             [0, 0, 0, 0]
         ];
         generate_tile(&mut matrix);
+
+        let onkeypress = _ctx.link().callback(|event: KeyboardEvent| {
+            match event.key().as_str() {
+                "ArrowUp" => {Msg::KeyUP},
+                "ArrowDown" => {Msg::KeyDOWN},
+                "ArrowLeft" => {Msg::KeyLEFT},
+                "ArrowRight" => {Msg::KeyRIGHT}
+                _ => {Msg::Nothing}
+            }
+        });
         
         Self { 
             matrix: matrix,
             score: 0,
+            onkeypress: onkeypress,
+            ended: false
         } 
     }
 
     fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
         match _msg {
-            Msg::KeyPressed(key_code) => match key_code {
-                37 => {if shift(&mut self.matrix, [0, -1], &mut self.score) {}},
-                38 => {if shift(&mut self.matrix, [-1, 0], &mut self.score) {}},
-                39 => {if shift(&mut self.matrix, [-1, 0], &mut self.score) {}},
-                40 => {if shift(&mut self.matrix, [-1, 0], &mut self.score) {}},
-                _ => return false,
-            }
+            Msg::KeyUP => {if shift(&mut self.matrix, [-1, 0], &mut self.score) {self.ended = true}},
+            Msg::KeyDOWN => {if shift(&mut self.matrix, [1, 0], &mut self.score) {self.ended = true}},
+            Msg::KeyLEFT => {if shift(&mut self.matrix, [0, -1], &mut self.score) {self.ended = true}},
+            Msg::KeyRIGHT => {if shift(&mut self.matrix, [0, 1], &mut self.score) {self.ended = true}},
+            _ => return false,
         }
         true
     }
@@ -261,28 +244,59 @@ impl Component for Game {
     fn view(&self, _ctx: &Context<Self>) -> Html {
         html!(
             <>
-            <div class={format!("piece piece-{}", self.matrix[0][0].to_string())}>{self.matrix[0][0].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[0][1].to_string())}>{self.matrix[0][1].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[0][2].to_string())}>{self.matrix[0][2].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[0][3].to_string())}>{self.matrix[0][3].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[1][0].to_string())}>{self.matrix[1][0].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[1][1].to_string())}>{self.matrix[1][1].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[1][2].to_string())}>{self.matrix[1][2].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[1][3].to_string())}>{self.matrix[1][3].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[2][0].to_string())}>{self.matrix[2][0].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[2][1].to_string())}>{self.matrix[2][1].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[2][2].to_string())}>{self.matrix[2][2].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[2][3].to_string())}>{self.matrix[2][3].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[3][0].to_string())}>{self.matrix[3][0].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[3][1].to_string())}>{self.matrix[3][1].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[3][2].to_string())}>{self.matrix[3][2].to_string()}</div>
-            <div class={format!("piece piece-{}", self.matrix[3][3].to_string())}>{self.matrix[3][3].to_string()}</div>
+            <main>
+            <div class="container">
+                <div class="game">
+                    <div class="game__header">
+                        <div class="game__header__2048">{"2048"}</div>
+                        <div class="content">
+                            <div>
+                                <p>{"pontuação"}</p>
+                                <span>{self.score}</span>
+                            </div>
+                            <div>
+                                <p>{"melhor"}</p>
+                                <span>{"0"}</span>
+                            </div>
+                            <p>{"junte as peças até formar 2048!"}</p>
+                        </div>
+                    </div>
+                <div class="board">
+                    <div class={format!("piece piece-{}", self.matrix[0][0].to_string())}>{self.matrix[0][0].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[0][1].to_string())}>{self.matrix[0][1].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[0][2].to_string())}>{self.matrix[0][2].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[0][3].to_string())}>{self.matrix[0][3].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[1][0].to_string())}>{self.matrix[1][0].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[1][1].to_string())}>{self.matrix[1][1].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[1][2].to_string())}>{self.matrix[1][2].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[1][3].to_string())}>{self.matrix[1][3].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[2][0].to_string())}>{self.matrix[2][0].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[2][1].to_string())}>{self.matrix[2][1].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[2][2].to_string())}>{self.matrix[2][2].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[2][3].to_string())}>{self.matrix[2][3].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[3][0].to_string())}>{self.matrix[3][0].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[3][1].to_string())}>{self.matrix[3][1].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[3][2].to_string())}>{self.matrix[3][2].to_string()}</div>
+                    <div class={format!("piece piece-{}", self.matrix[3][3].to_string())}>{self.matrix[3][3].to_string()}</div>
+                </div>
+
+                <h1 style={format!("display: {}", if self.ended {""} else {"none"})}> {"GAME OVER"} </h1>
+                <button onkeydown={self.onkeypress.clone()}>{"iniciar"} <i class="fa fa-play" style="font-size:36px; color: white;"></i></button>
+                </div>
+                </div>
+            </main>
             </>
         )
     }
 
 }
 
+// Cria o html
+// Mas por enquanto o jogo não usa esse front
+#[function_component(App)]
+fn app() -> Html {
+    html! {<Game/>}
+}
 
 /**
 Função main, que inicializa a págica e chama a função para inicializar o jogo.
